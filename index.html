@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA : ARCHITECTURAL TOPOLOGY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=JetBrains+Mono:wght@100;400;700&family=Outfit:wght@100;400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #00d4ff;
+            --dark-void: #010204;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+        body { background-color: var(--dark-void); color: #fff; font-family: 'Outfit', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        #light-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        main { position: relative; z-index: 2; }
+        .hero { height: 120vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .title-glitch { font-family: 'Syncopate', sans-serif; font-size: clamp(3rem, 10vw, 7rem); background: linear-gradient(135deg, #fff 30%, var(--primary-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 50px 5%; }
+        .data-card { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px; transform: translateY(50px); opacity: 0; }
+        .data-card h2 { font-family: 'Syncopate', sans-serif; color: var(--primary-blue); border-bottom: 1px solid var(--primary-blue); margin-bottom: 20px; }
+        .data-point { background: rgba(255, 255, 255, 0.02); padding: 20px; margin-bottom: 15px; border-left: 2px solid var(--primary-blue); }
+        .light-path { position: fixed; top: 0; right: 0; width: 2px; height: 100%; background: linear-gradient(to bottom, transparent, var(--primary-blue), transparent); box-shadow: 0 0 30px var(--primary-blue); z-index: 1; }
+    </style>
+</head>
+<body>
+    <canvas id="light-canvas"></canvas>
+    <div class="light-path"></div>
+    <main>
+        <section class="hero">
+            <h1 class="title-glitch">BIOMETRY<br>OF DNA</h1>
+            <p style="font-family: 'JetBrains Mono'; color: #00d4ff; letter-spacing: 5px; margin-top: 20px;">DIAGNOSTIC VIEW // PH.D LEVEL DATA</p>
+        </section>
+        <section class="section"><div class="data-card"><h2>01. TOPOLOGY</h2><div class="data-point"><strong>L = Tw + Wr</strong><p>Linking Number equals Twist plus Writhe. A fundamental topological constant for double-stranded DNA cycles.</p></div><div class="data-point"><strong>SUGAR PUCKER</strong><p>B-DNA typically exhibits a C2'-endo conformation, driving the right-handed helical architecture.</p></div></div></section>
+        <section class="section"><div class="data-card"><h2>02. GEOMETRY</h2><div class="data-point"><strong>ÅNGSTRÖM PRECISION</strong><p>Helical Rise: 3.38 Å. Diameter: 20 Å. Major Groove: 22 Å width for protein-access sequence recognition.</p></div></div></section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        const canvas = document.getElementById('light-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [];
+        function init() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        class Sparkle {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * w + (w * 0.5); this.y = -20; this.size = Math.random() * 2; this.speedX = -Math.random() * 2 - 1; this.speedY = Math.random() * 3 + 2; this.life = 1; this.char = ["A", "T", "C", "G"][Math.floor(Math.random() * 4)]; }
+            update() { this.x += this.speedX; this.y += this.speedY; this.life -= 0.005; if (this.life <= 0 || this.y > h) this.reset(); }
+            draw() { ctx.fillStyle = `rgba(0, 212, 255, ${this.life})`; ctx.font = `${this.size * 8}px JetBrains Mono`; ctx.fillText(this.char, this.x, this.y); }
+        }
+        for (let i = 0; i < 60; i++) particles.push(new Sparkle());
+        function animate() { ctx.clearRect(0, 0, w, h); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        gsap.to(".light-path", { scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 1 }, rotate: -45, x: -window.innerWidth, scale: 5 });
+        gsap.utils.toArray(".data-card").forEach(card => { gsap.to(card, { scrollTrigger: { trigger: card, start: "top 80%" }, y: 0, opacity: 1, duration: 1.5 }); });
+        init(); animate();
+    </script>
+</body>
+</html>
